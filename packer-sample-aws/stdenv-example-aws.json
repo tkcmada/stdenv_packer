@@ -20,7 +20,8 @@
         "volume_size": 20
       }
     ],
-    "ami_name": "stdenv-sample-{{isotime | clean_ami_name}}"
+    "ami_name": "stdenv-sample-{{isotime | clean_ami_name}}",
+    "ami_groups": "all"
   }],
  "provisioners": [{
     "type": "shell",

@@ -1,4 +1,5 @@
 cd %~dp0
-..\bin\packer.exe validate stdenv-example.json
-..\bin\packer.exe build    stdenv-example.json
+set PATH=%~dp0..\bin;%PATH%
+packer.exe validate stdenv-example-aws.json
+packer.exe build    stdenv-example-aws.json
 pause
