@@ -22,36 +22,23 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags": {"Name": "Packer stdenv-rhel7-kubernetes"},
-    "ami_name": "stdenv-rhel7-kubernetes-{{isotime | clean_ami_name}}",
+    "run_tags": {"Name": "Packer stdenv-rhel7-cdh5"},
+    "ami_name": "stdenv-rhel7-cdh5-{{isotime | clean_ami_name}}",
     "ami_groups": "all"
   }],
  "provisioners": [
    {
     "type": "file",
-    "source": "daemon.json",
-    "destination": "~/daemon.json"
-   }
-   ,
-   {
-    "type": "file",
-    "source": "kubernetes.repo",
-    "destination": "~/kubernetes.repo"
+    "source": "cloudera-cdh5.repo",
+    "destination": "~/cloudera-cdh5.repo"
    }
    ,
    {
     "type": "shell",
     "inline": [
        "sudo setenforce 0"
-      ,"sudo cp -p ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
-      ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
-      ,"sudo yum install -y docker"
-      ,"sudo cp -p ~/daemon.json /etc/docker/daemon.json"
-      ,"sudo systemctl enable docker"
-      ,"sudo yum install -y kubelet kubeadm kubectl"
-      ,"sudo systemctl enable kubelet"
-      ,"sudo systemctl start docker"
-      ,"sudo systemctl start kubelet"
+      ,"sudo cp -p ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
+      ,"sudo yum clean all && sudo yum install -y hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-hdfs-secondarynamenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-yarn-proxyserver hadoop-client"
      ]
    }
   ]

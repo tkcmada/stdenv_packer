@@ -21,6 +21,7 @@
         "delete_on_termination": true
       }
     ],
+    "run_tags": {"Name": "Packer stdenv-docker-registry"},
     "ami_name": "stdenv-docker-registry-{{isotime | clean_ami_name}}",
     "ami_groups": "all"
   }],
