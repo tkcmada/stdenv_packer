@@ -22,7 +22,7 @@
         "delete_on_termination": true
       }
     ],
-    "ami_name": "stdenv-kubernetes-rhel7-{{isotime | clean_ami_name}}",
+    "ami_name": "stdenv-rhel7-kubernetes-{{isotime | clean_ami_name}}",
     "ami_groups": "all"
   }],
  "provisioners": [
