@@ -22,7 +22,8 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags": {"Name": "Packer stdenv-rhel7-kubernetes"},
+    "run_tags":      {"Name": "Packer stdenv-rhel7-kubernetes"},
+    "snapshot_tags": {"Name": "Packer stdenv-rhel7-kubernetes"},
     "ami_name": "stdenv-rhel7-kubernetes-{{isotime | clean_ami_name}}",
     "ami_groups": "all"
   }],
