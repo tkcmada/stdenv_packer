@@ -1,0 +1,86 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "rhel_user":      "{{env `RHEL_USER`}}",
+    "rhel_password":  "{{env `RHEL_PASSWORD`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": true,
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "ap-northeast-1",
+    "source_ami": "ami-35556534",
+    "ami_virtualization_type": "hvm",
+    "instance_type": "t2.small",
+    "ssh_username": "ec2-user",
+    "ssh_timeout": "5m",
+    "user_data_file" : "startup.sh",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_size": 30,
+        "delete_on_termination": true
+      }
+    ],
+    "run_tags":      {"Name": "Packer stdenv-rhel7-docker-registry"},
+    "snapshot_tags": {"Name": "Packer stdenv-rhel7-docker-registry"},
+    "ami_name": "stdenv-rhel7-docker-registry-{{isotime | clean_ami_name}}",
+    "ami_groups": "all"
+  }],
+ "provisioners": [
+   {
+    "type": "shell",
+    "inline": [
+      "sudo getenforce",
+      "sudo setenforce 0",
+      "sudo echo 'SELINUX=disabled' > /etc/selinux/config",
+      "sudo subscription-manager register --username={{user `rhel_user`}} --password={{user `rhel_password`}}",
+      "sudo subscription-manager list --available | sudo tee /root/subscription-available.txt",
+      "sudo yum install -y perl",
+      "sudo subscription-manager subscribe --pool=`sudo subscription-manager list --available | grep Pool | head -1 | perl -n -e \"print $' if /Pool ID: +/\"` || echo 'continue anyway'",
+      "sudo subscription-manager repos --enable=rhel-7-server-extras-rpms",
+      "sudo subscription-manager repos --enable=rhel-7-server-optional-rpms",
+      "sudo yum install -y docker",
+      "sudo systemctl enable docker",
+      "sudo systemctl start docker",
+      "sh -c 'sleep 10'",
+      "sudo docker info",
+      "cd /home/ec2-user",
+      "sudo docker pull registry",
+      "sudo docker run -d -v /opt/registry:/var/lib/registry -p 5000:5000 registry",
+      "sudo docker pull registry.access.redhat.com/rhel7.4",
+      "sudo docker tag  registry.access.redhat.com/rhel7.4 localhost:5000/rhel7.4",
+      "sudo docker push localhost:5000/rhel7.4",
+      "sudo docker pull registry.access.redhat.com/rhel6.5",
+      "sudo docker tag  registry.access.redhat.com/rhel6.5 localhost:5000/rhel6.5",
+      "sudo docker push localhost:5000/rhel6.5",
+      "sudo yum install -y git",
+      "git clone https://github.com/tkcmada/stdenv_docker2.git",
+      "cd stdenv_docker2",
+      "sudo sh build_tag_push.sh stdenv_alpine",
+      "sudo sh build_tag_push.sh stdenv_tools",
+      "sudo sh build_tag_push.sh stdenv_tools_java",
+      "sudo sh build_tag_push.sh stdenv_hadoop",
+      "sudo sh build_tag_push.sh stdenv_kubernetes",
+      "sudo sh build_tag_push.sh stdenv_cloudera_quickstart",
+      "sudo sh build_tag_push.sh stdenv_node"
+     ]
+   }
+   ,
+   {
+    "type": "file",
+    "source": "daemon.json",
+    "destination": "~/daemon.json"
+   }
+   ,
+   {
+    "type": "shell",
+    "inline": [
+       "sudo mkdir -p /etc/docker"
+      ,"sudo cp -p ~/daemon.json /etc/docker/daemon.json"
+     ]
+   }
+  ]
+}

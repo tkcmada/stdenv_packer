@@ -17,3 +17,7 @@ or
 
 just run "stdenv-docker-registry/packer_build.bat"
 
+Frequently used AIM
+-------------------
+- RHEL7(Tokyo) ami-35556534
+- Amazon Linux(Tokyo) ami-05964063
