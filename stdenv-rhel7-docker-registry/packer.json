@@ -10,6 +10,8 @@
     "ssh_pty": true,
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
+    "ssh_keypair_name": "shimada",
+    "ssh_private_key_file": "../../../toku_home/.ssh/shimada.pem",
     "region": "ap-northeast-1",
     "source_ami": "ami-35556534",
     "ami_virtualization_type": "hvm",
@@ -19,7 +21,7 @@
     "user_data_file" : "startup.sh",
     "launch_block_device_mappings": [
       {
-        "device_name": "/dev/sda1",
+        "device_name": "/dev/xvda2",
         "volume_size": 40,
         "delete_on_termination": true
       }
@@ -32,25 +34,8 @@
  "provisioners": [
    {
     "type": "file",
-    "source": "subscription-find-pool.pl",
-    "destination": "~/subscription-find-pool.pl"
-   }
-   ,
-   {
-    "type": "shell",
-    "inline": [
-      "sudo getenforce",
-      "sudo setenforce 0",
-      "sudo echo 'SELINUX=disabled' | sudo tee /etc/selinux/config",
-      "sudo yum install -y perl",
-      "sudo subscription-manager register --username={{user `rhel_user`}} --password={{user `rhel_password`}}",
-      "sudo subscription-manager list --available > subscription-available.txt",
-      "perl subscription-find-pool.pl < subscription-available.txt > pool.txt",
-      "cat pool.txt",
-      "sudo subscription-manager subscribe --pool=`cat pool.txt`",
-      "sudo subscription-manager repos --enable=rhel-7-server-extras-rpms",
-      "sudo subscription-manager repos --enable=rhel-7-server-optional-rpms"
-     ]
+    "source": "subscription-find-pool.py",
+    "destination": "~/subscription-find-pool.py"
    }
    ,
    {
@@ -62,14 +47,23 @@
    {
     "type": "shell",
     "inline": [
-       "sudo mkdir -p /etc/docker"
-      ,"sudo cp -p ~/daemon.json /etc/docker/daemon.json"
-     ]
-   }
-   ,
-   {
-    "type": "shell",
-    "inline": [
+      "export RHEL_USER={{user `rhel_user`}}",
+      "export RHEL_PASSWORD={{user `rhel_password`}}",
+      "echo RHEL_USER is $RHEL_USER",
+      "sudo echo RHEL_USER in sudo is $RHEL_USER",
+      "df -m /",
+      "sudo getenforce",
+      "sudo setenforce 0",
+      "sudo echo 'SELINUX=disabled' | sudo tee /etc/selinux/config",
+      "sudo subscription-manager register --force --username={{user `rhel_user`}} --password={{user `rhel_password`}}",
+      "sudo subscription-manager list --available > subscription-available.txt",
+      "python subscription-find-pool.py < subscription-available.txt > pool.txt",
+      "cat pool.txt",
+      "sudo subscription-manager subscribe --pool=`cat pool.txt`",
+      "sudo subscription-manager repos --enable=rhel-7-server-extras-rpms",
+      "sudo subscription-manager repos --enable=rhel-7-server-optional-rpms",
+      "sudo yum install -y docker",
+      "sudo cp -p ~/daemon.json /etc/docker/daemon.json",
       "sudo systemctl enable docker",
       "sudo systemctl start docker",
       "sh -c 'sleep 10'",
@@ -79,7 +73,29 @@
       "sh -c 'sleep 10'",
       "sudo docker pull registry.access.redhat.com/rhel7.4",
       "sudo docker tag  registry.access.redhat.com/rhel7.4 localhost:5000/rhel7.4",
-      "sudo docker push localhost:5000/rhel7.4"
+      "sudo docker push localhost:5000/rhel7.4",
+      "sudo yum install -y git",
+      "git clone https://github.com/tkcmada/stdenv_docker2.git"
+     ]
+   }
+   ,
+   {
+    "type": "shell",
+    "inline": [
+      "cd stdenv_docker2",
+      "chmod +x ./build_tag_push.sh",
+      "./build_tag_push.sh stdenv_rhel",
+      "sudo df -m .",
+      "./build_tag_push.sh stdenv_alpine",
+      "sudo df -m .",
+      "./build_tag_push.sh stdenv_tools",
+      "sudo df -m .",
+      "./build_tag_push.sh stdenv_tools_java",
+      "sudo df -m .",
+      "./build_tag_push.sh stdenv_hadoop",
+      "sudo df -m .",
+      "./build_tag_push.sh stdenv_node",
+      "sudo df -m ."
      ]
    }
   ]
