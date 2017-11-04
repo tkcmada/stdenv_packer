@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "rhel_user":      "{{env `RHEL_USER`}}",
+    "rhel_password":  "{{env `RHEL_PASSWORD`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": true,
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "ssh_keypair_name": "shimada",
+    "ssh_private_key_file": "../../../toku_home/.ssh/shimada.pem",
+    "region": "ap-northeast-1",
+    "source_ami": "ami-0bfa546d",
+    "ami_virtualization_type": "hvm",
+    "instance_type": "t2.small",
+    "ssh_username": "ec2-user",
+    "ssh_timeout": "5m",
+    "user_data_file" : "startup.sh",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_size": 40,
+        "delete_on_termination": true
+      }
+    ],
+    "run_tags":      {"Name": "Packer stdenv-rhel7-resize-volume"},
+    "snapshot_tags": {"Name": "Packer stdenv-rhel7-resize-volume"},
+    "ami_name": "stdenv-rhel7-resize-volume-{{isotime | clean_ami_name}}",
+    "ami_groups": "all"
+  }],
+ "provisioners": [
+   {
+    "type": "shell",
+    "script": "resizevol.sh"
+   }
+  ]
+}
