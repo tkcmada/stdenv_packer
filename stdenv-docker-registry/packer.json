@@ -28,38 +28,39 @@
   }],
  "provisioners": [
    {
-    "type": "shell",
-    "inline": [
-      "sudo yum install -y docker git",
-      "sudo usermod -g docker ec2-user",
-      "sudo service docker start",
-      "sh -c 'sleep 10'",
-      "sudo docker info",
-      "cd /home/ec2-user",
-      "sudo docker pull registry",
-      "sudo docker run -d -v /opt/registry:/var/lib/registry -p 5000:5000 registry",
-      "git clone https://github.com/tkcmada/stdenv_docker2.git",
-      "cd stdenv_docker2",
-      "sudo sh build_tag_push.sh stdenv_alpine",
-      "sudo sh build_tag_push.sh stdenv_tools",
-      "sudo sh build_tag_push.sh stdenv_tools_java",
-      "sudo sh build_tag_push.sh stdenv_hadoop",
-      "sudo sh build_tag_push.sh stdenv_kubernetes",
-      "sudo sh build_tag_push.sh stdenv_node"
-     ]
+    "type": "file",
+    "source": "daemon.json",
+    "destination": "~/"
    }
    ,
    {
     "type": "file",
-    "source": "daemon.json",
-    "destination": "~/daemon.json"
+    "source": "run_docker_registry.sh",
+    "destination": "~/"
    }
    ,
    {
     "type": "shell",
     "inline": [
-       "sudo mkdir -p /etc/docker"
+       "sudo yum install -y docker git"
+      ,"sudo usermod -g docker ec2-user"
+      ,"sudo service docker start"
+      ,"sh -c 'sleep 10'"
+      ,"sudo docker info"
+      ,"sudo mkdir -p /etc/docker"
       ,"sudo cp -p ~/daemon.json /etc/docker/daemon.json"
+      ,"sudo docker pull registry"
+      ,"sudo chmod 755 run_docker_registry.sh"
+      ,"rm run_docker_registry.sh"
+      ,"echo '@reboot ~/run_docker_registry.sh 2>&1 > ~/my_docker_registry.log' | crontab"
+      ,"sudo iptables -L"
+      ,"sudo iptables -A INPUT -i lo -j ACCEPT"
+      ,"sudo iptables -A INPUT -p icmp -j ACCEPT"
+      ,"sudo iptables -A INPUT -p tcp -m tcp --dport 8000 -j ACCEPT"
+      ,"sudo service iptables save"
+      ,"sudo service iptables restart"
+      ,"sudo cat /etc/sysconfig/iptables"
+      ,"echo 'Completed Packer'"
      ]
    }
   ]
