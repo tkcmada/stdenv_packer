@@ -40,19 +40,48 @@
    }
    ,
    {
+    "type": "file",
+    "source": "no-ip2.conf",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "registry",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
-       "sudo yum install -y docker git"
+       "echo check volume size"
+      ,"lsblk"
+
+      ,"echo installing epel"
+      ,"sudo yum-config-manager --enable epel"
+
+      ,"echo installing docker"
+      ,"sudo yum install -y docker git noip"
       ,"sudo usermod -g docker ec2-user"
       ,"sudo service docker start"
       ,"sh -c 'sleep 10'"
       ,"sudo docker info"
       ,"sudo mkdir -p /etc/docker"
       ,"sudo cp -p ~/daemon.json /etc/docker/daemon.json"
+      
+      ,"echo installing docker-compose"
+      ,"sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose"
+      ,"sudo chmod +x /usr/bin/docker-compose"
+      
+      ,"echo installing docker registry"
       ,"sudo docker pull registry"
-      ,"sudo chmod 755 run_docker_registry.sh"
-      ,"rm run_docker_registry.sh"
-      ,"echo '@reboot ~/run_docker_registry.sh 2>&1 > ~/my_docker_registry.log' | crontab"
+      ,"sudo mv registry /etc/init.d/"
+      ,"sudo chmod +x /etc/init.d/registry"
+      ,"sudo chkconfig --add registry"
+      ,"sudo chkconfig registry on"
+      ,"chkconfig --list registry"
+
+      ,"echo iptables setup(probably not required, but just leaving for reference)
       ,"sudo iptables -L"
       ,"sudo iptables -A INPUT -i lo -j ACCEPT"
       ,"sudo iptables -A INPUT -p icmp -j ACCEPT"
@@ -60,6 +89,16 @@
       ,"sudo service iptables save"
       ,"sudo service iptables restart"
       ,"sudo cat /etc/sysconfig/iptables"
+
+      ,"echo installing noip"
+      ,"sudo install -m 600 no-ip2.conf /etc/"
+      ,"rm -f no-ip2.conf"
+      ,"sudo chkconfig noip on"
+      ,"chkconfig --list noip"
+      ,"sudo service noip start"
+      
+      ,"echo installing Portus(not completed yet)"
+      ,"git clone https://github.com/SUSE/Portus.git"
       ,"echo 'Completed Packer'"
      ]
    }
