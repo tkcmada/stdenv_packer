@@ -1,0 +1,88 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": true,
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "ap-northeast-1",
+    "source_ami": "ami-59f6583f",
+    "ami_virtualization_type": "hvm",
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ssh_timeout": "5m",
+    "user_data_file" : "startup.sh",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_size": 100,
+        "delete_on_termination": true
+      }
+    ],
+    "run_tags":      {"Name": "Packer stdenv-rhel7-repo"},
+    "snapshot_tags": {"Name": "Packer stdenv-rhel7-repo"},
+    "ami_name": "stdenv-rhel7-repo-{{isotime | clean_ami_name}}",
+    "ami_groups": "all"
+  }],
+ "provisioners": [
+   {
+    "type": "file",
+    "source": "cloudera-cdh5.repo",
+    "destination": "~/cloudera-cdh5.repo"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "daemon.json",
+    "destination": "~/daemon.json"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "kubernetes.repo",
+    "destination": "~/kubernetes.repo"
+   }
+   ,
+   {
+    "type": "shell",
+    "inline": [
+       "lsblk"
+       
+      ,"echo enabling repo"
+      ,"sudo mv ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
+      ,"sudo mv ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
+      ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
+
+      ,"echo downloading..."
+      ,"sudo yum -y install yum-plugin-downloadonly"
+      ,"sudo mkdir -p /opt/repo"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo squid"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo docker"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo kubelet kubeadm kubectl"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo kubernetes-ansible"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo zeromq"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo bind-chroot bind-utils"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo zabbix22"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo yamllint"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo sqlite"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo R R-java R-java-devel"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo rabbitmq-server rabbitmq-java-client"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo rust"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo nagios nagios-plugins-all"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo nkf"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo jq"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo json_simple"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo json-parser json-parser-devel"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo httpd"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo binutils"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-hdfs-secondarynamenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-yarn-proxyserver hadoop-client"
+
+     ]
+   }
+  ]
+}

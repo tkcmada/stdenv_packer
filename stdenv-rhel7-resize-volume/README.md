@@ -1,23 +1,46 @@
 How to create new AMI resizing root partition ?
 -----------------------------------------------
 
-1. run packer_build.bat based on RHEL7 ( ami-35556534 ) and create new AMI including cloud-init. ( Let's say image1 )
-2. we need to reboot twice for image1. run instance based on image1 and login via SSH and just "sudo reboot"
-3. Again, login via SSH and just "sudo reboot"
-4. Again, login via SSH and run following command.
+1. run packer_build.bat based on RHEL7 ( ami-35556534 ) and create new AMI including cloud-init. ( The image name is stdenv-rhel7-resize-volume )
+2. run instance based on stdenv-rhel7-resize-volume and login via SSH
+3.
 ```
+$ lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0  100G  0 disk
+„¥„Ÿxvda1 202:1    0   1M  0 part
+„¤„Ÿxvda2 202:2    0   6G  0 part /
+
 $ sudo fdisk /dev/xvda
-d ( delete partion )
-2 ( partitiopn 2)
-n ( create partion )
-2 ( partition 2 )
-  ( start sector is default )
-  ( end sector is also default )
-p
-w
+Command: p ( print )
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  BIOS boot parti
+ 2         4096     12587007      6G  Microsoft basic
+ 
+Command: d ( delete partion )
+Command: 2 ( partitiopn 2)
+Command: n ( create partion )
+Command: 2 ( partition 2 )
+Command:   ( start sector is default )
+Command:   ( end sector is also default )
+Command: p
+
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  BIOS boot parti
+ 2         4096    209715166    100G  Linux filesyste
+ 
+Command: w
 
 $ sudo reboot
-$ lsblk
-# make sure resize has been done.
-5. create AMI from running instance and name it as "stdenv-rhel-40GB"
 ```
+
+4. After a while, login via SSH again.
+```
+$ lsblk
+NAME    MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+xvda    202:0    0  100G  0 disk
+„¥„Ÿxvda1 202:1    0   1M  0 part
+„¤„Ÿxvda2 202:2    0  100G  0 part /
+```
+
+5. create AMI from running instance and name it as "stdenv-rhel-100GB"

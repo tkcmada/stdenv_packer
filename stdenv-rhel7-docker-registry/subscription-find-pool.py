@@ -14,5 +14,6 @@ for line in sys.stdin:
     pool = re.sub(p2, '', line)
     sys.stdout.write(pool)
     exit(0)
+print('Red Hat Enterprise Linux Server subscription is not found.')
 exit(1)
 

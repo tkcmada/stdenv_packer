@@ -10,10 +10,8 @@
     "ssh_pty": true,
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
-    "ssh_keypair_name": "shimada",
-    "ssh_private_key_file": "../../../toku_home/.ssh/shimada.pem",
     "region": "ap-northeast-1",
-    "source_ami": "ami-35556534",
+    "source_ami": "ami-59f6583f",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.small",
     "ssh_username": "ec2-user",
@@ -21,7 +19,7 @@
     "user_data_file" : "startup.sh",
     "launch_block_device_mappings": [
       {
-        "device_name": "/dev/xvda2",
+        "device_name": "/dev/sda1",
         "volume_size": 40,
         "delete_on_termination": true
       }
@@ -40,18 +38,33 @@
    ,
    {
     "type": "file",
+    "source": "retry.sh",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
     "source": "daemon.json",
     "destination": "~/daemon.json"
    }
    ,
    {
+    "type": "file",
+    "source": "run_docker_registry.sh",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
+      "chmod +x retry.sh",
+      "sudo fdisk -l",
+      "lsblk",
+      "df -m",
       "export RHEL_USER={{user `rhel_user`}}",
       "export RHEL_PASSWORD={{user `rhel_password`}}",
       "echo RHEL_USER is $RHEL_USER",
       "sudo echo RHEL_USER in sudo is $RHEL_USER",
-      "df -m /",
       "sudo getenforce",
       "sudo setenforce 0",
       "sudo echo 'SELINUX=disabled' | sudo tee /etc/selinux/config",
@@ -68,34 +81,12 @@
       "sudo systemctl start docker",
       "sh -c 'sleep 10'",
       "sudo docker info",
-      "sudo docker pull registry",
-      "sudo docker run -d -v /opt/registry:/var/lib/registry -p 5000:5000 registry",
-      "sh -c 'sleep 10'",
-      "sudo docker pull registry.access.redhat.com/rhel7.4",
-      "sudo docker tag  registry.access.redhat.com/rhel7.4 localhost:5000/rhel7.4",
-      "sudo docker push localhost:5000/rhel7.4",
       "sudo yum install -y git",
-      "git clone https://github.com/tkcmada/stdenv_docker2.git"
-     ]
-   }
-   ,
-   {
-    "type": "shell",
-    "inline": [
-      "cd stdenv_docker2",
-      "chmod +x ./build_tag_push.sh",
-      "./build_tag_push.sh stdenv_rhel",
-      "sudo df -m .",
-      "./build_tag_push.sh stdenv_alpine",
-      "sudo df -m .",
-      "./build_tag_push.sh stdenv_tools",
-      "sudo df -m .",
-      "./build_tag_push.sh stdenv_tools_java",
-      "sudo df -m .",
-      "./build_tag_push.sh stdenv_hadoop",
-      "sudo df -m .",
-      "./build_tag_push.sh stdenv_node",
-      "sudo df -m ."
+      "sudo ./retry.sh docker pull registry",
+      "sudo docker run -d -v /opt/registry:/var/lib/registry -p 5000:5000 registry"
+      ,"sudo chmod 755 run_docker_registry.sh"
+      ,"rm run_docker_registry.sh"
+      ,"echo '@reboot ~/run_docker_registry.sh 2>&1 > ~/my_docker_registry.log' | crontab"
      ]
    }
   ]

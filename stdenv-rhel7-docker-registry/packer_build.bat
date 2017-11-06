@@ -10,5 +10,5 @@ if "%RHEL_PASSWORD%" == "" (
 echo username=%RHEL_USER%
 echo password=%RHEL_PASSWORD%
 packer.exe validate packer.json
-packer.exe build    -on-error=ask packer.json
+packer.exe build    -on-error=cleanup packer.json
 pause
