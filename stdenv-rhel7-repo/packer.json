@@ -9,7 +9,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-59f6583f",
+    "source_ami": "ami-3d6ec75b",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
@@ -31,19 +31,31 @@
    {
     "type": "file",
     "source": "cloudera-cdh5.repo",
-    "destination": "~/cloudera-cdh5.repo"
+    "destination": "~/"
    }
    ,
    {
     "type": "file",
     "source": "daemon.json",
-    "destination": "~/daemon.json"
+    "destination": "~/"
    }
    ,
    {
     "type": "file",
     "source": "kubernetes.repo",
-    "destination": "~/kubernetes.repo"
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "localrepo.repo",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "no-ip2.conf",
+    "destination": "~/"
    }
    ,
    {
@@ -81,7 +93,32 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo httpd"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo binutils"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo hadoop-yarn-resourcemanager hadoop-hdfs-namenode hadoop-hdfs-secondarynamenode hadoop-yarn-nodemanager hadoop-hdfs-datanode hadoop-mapreduce hadoop-mapreduce-historyserver hadoop-yarn-proxyserver hadoop-client"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo noip"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo krb5-server krb5-workstation krb5-libs krb5-auth-dialog krb5-pkinit-openssl"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo sssd sssd-tools sssd-client sssd-ldap openldap-clients oddjob oddjob-mkhomedir"
+      
+      ,"echo create repo"
+      ,"sudo yum install -y createrepo"
+      ,"sudo createrepo /opt/repo"
+      ,"sudo mv localrepo.repo /etc/yum.repos.d/"
 
+      ,"echo installing docker"
+      ,"sudo yum install -y docker"
+      ,"sudo mv ~/daemon.json /etc/docker/daemon.json"
+      ,"sudo systemctl enable docker"
+      ,"sudo systemctl start docker"
+      ,"sh -c 'sleep 5'"
+      ,"sudo docker info"
+
+      ,"echo installing noip"
+      ,"sudo install -y noip"
+      ,"sudo install -m 600 no-ip2.conf /etc/"
+      ,"rm -f no-ip2.conf"
+      ,"sudo systemctl enable noip"
+      ,"sudo systemctl start  noip"
+      ,"sudo systemctl status noip"
+
+      ,"echo Completed Packer"
      ]
    }
   ]
