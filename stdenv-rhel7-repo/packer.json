@@ -96,6 +96,11 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo noip"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo krb5-server krb5-workstation krb5-libs krb5-auth-dialog krb5-pkinit-openssl"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo sssd sssd-tools sssd-client sssd-ldap openldap-clients oddjob oddjob-mkhomedir"
+
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-agent"
+      ,"cd ~ && reposync -r cloudera-cdh5"
+      ,"sudo mv cloudera-cdh5/*.rpm /opt/repo/"
       
       ,"echo create repo"
       ,"sudo yum install -y createrepo"
