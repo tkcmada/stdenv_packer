@@ -59,6 +59,18 @@
    }
    ,
    {
+    "type": "file",
+    "source": "repo-switch-internet.sh",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "repo-switch-local.sh",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
        "lsblk"
@@ -96,6 +108,7 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo noip"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo krb5-server krb5-workstation krb5-libs krb5-auth-dialog krb5-pkinit-openssl"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo sssd sssd-tools sssd-client sssd-ldap openldap-clients oddjob oddjob-mkhomedir"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo dnsmasq"
 
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-agent"
@@ -122,6 +135,9 @@
       ,"sudo systemctl enable noip"
       ,"sudo systemctl start  noip"
       ,"sudo systemctl status noip"
+      
+      ,"chmod +x repo-switch-internet.sh repo-switch-local.sh"
+      ,"./repo-switch-local.sh"
 
       ,"echo Completed Packer"
      ]
