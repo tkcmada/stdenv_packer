@@ -9,7 +9,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-3d6ec75b",
+    "source_ami": "ami-31228957",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
@@ -31,6 +31,12 @@
    {
     "type": "file",
     "source": "cloudera-cdh5.repo",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "cloudera-kudu.repo",
     "destination": "~/"
    }
    ,
@@ -74,15 +80,22 @@
     "type": "shell",
     "inline": [
        "lsblk"
-       
+      
+      ,"echo disabling selinux"
+      ,"sudo setenforce 0"
+      ,"echo SELINUX=disabled | sudo tee /etc/selinux/config"
+      
       ,"echo enabling repo"
       ,"sudo mv ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
       ,"sudo mv ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
+      ,"sudo mv ~/cloudera-kudu.repo /etc/yum.repos.d/cloudera-kudu.repo"
       ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
+      ,"sudo yum install -y createrepo yum-plugin-downloadonly httpd"
+      ,"sudo mkdir -p /var/www/html/archive/5"
 
       ,"echo downloading..."
-      ,"sudo yum -y install yum-plugin-downloadonly"
       ,"sudo mkdir -p /opt/repo"
+      ,"sudo yum update  --downloadonly --downloaddir=/opt/repo"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo squid"
@@ -109,16 +122,19 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo krb5-server krb5-workstation krb5-libs krb5-auth-dialog krb5-pkinit-openssl"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo sssd sssd-tools sssd-client sssd-ldap openldap-clients oddjob oddjob-mkhomedir"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo dnsmasq"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo impala impala-server impala-state-store impala-catalog impala-shell"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
 
       ,"echo installing cdh5"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-agent"
+      
+      ,"echo downloading repo"
       ,"cd ~ && reposync -r cloudera-cdh5"
-      ,"sudo mv cloudera-cdh5/*.rpm /opt/repo/"
+      ,"cd ~ && reposync -r cloudera-kudu"
+      ,"find cloudera-cdh5/ cloudera-kudu/ -name "*.rpm" | sudo xargs mv -t /opt/repo/"
       
       ,"echo create repo"
-      ,"sudo yum install -y createrepo"
       ,"sudo createrepo /opt/repo"
       ,"sudo mv localrepo.repo /etc/yum.repos.d/"
 
@@ -137,6 +153,19 @@
       ,"sudo systemctl enable noip"
       ,"sudo systemctl start  noip"
       ,"sudo systemctl status noip"
+      
+      ,"echo downloading CloudManager"
+      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/ http://archive.cloudera.com/cm5/repo-as-tarball/5.13.0/cm5.13.0-centos7.tar.gz"
+      ,"cd /var/www/html/archive/5/ && sudo tar xvf cm*.tar.gz"
+      ,"echo downloading CDH percels"
+      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/CDH-5.13.0-1.cdh5.13.0.p0.29-el6.parcel"
+      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/CDH-5.13.0-1.cdh5.13.0.p0.29-el7.parcel"
+      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/manifest.json"
+      
+      ,"echo enabling httpd"
+      ,"sudo systemctl enable httpd"
+      ,"sudo systemctl start  httpd"
+      ,"sudo systemctl status httpd"
       
       ,"chmod +x repo-switch-internet.sh repo-switch-local.sh"
       ,"./repo-switch-local.sh"
