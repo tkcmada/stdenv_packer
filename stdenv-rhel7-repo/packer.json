@@ -147,8 +147,8 @@
       ,"sudo docker info"
 
       ,"echo installing noip"
-      ,"sudo install -y noip"
-      ,"sudo install -m 600 no-ip2.conf /etc/"
+      ,"sudo yum install -y noip"
+      ,"sudo yum install -m 600 no-ip2.conf /etc/"
       ,"rm -f no-ip2.conf"
       ,"sudo systemctl enable noip"
       ,"sudo systemctl start  noip"
