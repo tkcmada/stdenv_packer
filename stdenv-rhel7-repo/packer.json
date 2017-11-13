@@ -132,7 +132,7 @@
       ,"echo downloading repo"
       ,"cd ~ && reposync -r cloudera-cdh5"
       ,"cd ~ && reposync -r cloudera-kudu"
-      ,"find cloudera-cdh5/ cloudera-kudu/ -name "*.rpm" | sudo xargs mv -t /opt/repo/"
+      ,"find cloudera-cdh5/ cloudera-kudu/ -name '*.rpm' | sudo xargs mv -t /opt/repo/"
       
       ,"echo create repo"
       ,"sudo createrepo /opt/repo"
