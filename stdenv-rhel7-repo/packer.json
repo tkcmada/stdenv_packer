@@ -90,12 +90,16 @@
       ,"sudo mv ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
       ,"sudo mv ~/cloudera-kudu.repo /etc/yum.repos.d/cloudera-kudu.repo"
       ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
-      ,"sudo yum install -y createrepo yum-plugin-downloadonly httpd"
-      ,"sudo mkdir -p /var/www/html/archive/5"
-
+      ,"sudo yum-config-manager --disable rhui-REGION-client-config-server-7"
+      
+      ,"echo installing createrepo"
+      ,"sudo yum install -y createrepo"
+      
+      ,"echo installing yum-plugin-downloadonly"
+      ,"sudo yum install -y yum-plugin-downloadonly"
+      
       ,"echo downloading..."
       ,"sudo mkdir -p /opt/repo"
-      ,"sudo yum update  --downloadonly --downloaddir=/opt/repo"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo squid"
@@ -125,10 +129,10 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo impala impala-server impala-state-store impala-catalog impala-shell"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
 
-      ,"echo installing cdh5"
+      ,"echo installing cloudera manager"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
-      ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-agent"
-      
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-server-db-2 cloudera-manager-agent"
+
       ,"echo downloading repo"
       ,"cd ~ && reposync -r cloudera-cdh5"
       ,"cd ~ && reposync -r cloudera-kudu"
@@ -142,32 +146,14 @@
       ,"sudo yum install -y docker"
       ,"sudo mv ~/daemon.json /etc/docker/daemon.json"
       ,"sudo systemctl enable docker"
-      ,"sudo systemctl start docker"
-      ,"sh -c 'sleep 5'"
-      ,"sudo docker info"
 
       ,"echo installing noip"
       ,"sudo yum install -y noip"
       ,"sudo install -m 600 no-ip2.conf /etc/"
       ,"rm -f no-ip2.conf"
       ,"sudo systemctl enable noip"
-      ,"sudo systemctl start  noip"
-      ,"sudo systemctl status noip"
       
-      ,"echo downloading CloudManager"
-      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/ http://archive.cloudera.com/cm5/repo-as-tarball/5.13.0/cm5.13.0-centos7.tar.gz"
-      ,"cd /var/www/html/archive/5/ && sudo tar xvf cm*.tar.gz"
-      ,"echo downloading CDH percels"
-      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/CDH-5.13.0-1.cdh5.13.0.p0.29-el6.parcel"
-      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/CDH-5.13.0-1.cdh5.13.0.p0.29-el7.parcel"
-      ,"sudo wget -r -nd -np -np -P /var/www/html/archive/5/5.13/ http://archive.cloudera.com/cdh5/parcels/5.13/manifest.json"
-      
-      ,"echo enabling httpd"
-      ,"sudo systemctl enable httpd"
-      ,"sudo systemctl start  httpd"
-      ,"sudo systemctl status httpd"
-      
-      ,"chmod +x repo-switch-internet.sh repo-switch-local.sh"
+      ,"cd ~ && chmod +x repo-switch-internet.sh repo-switch-local.sh"
       ,"./repo-switch-local.sh"
 
       ,"echo Completed Packer"
