@@ -77,6 +77,18 @@
    }
    ,
    {
+    "type": "file",
+    "source": "mysql-connector-java-5.1.44-bin.jar",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "ojdbc6.jar",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
        "lsblk"
@@ -85,6 +97,11 @@
       ,"sudo setenforce 0"
       ,"echo SELINUX=disabled | sudo tee /etc/selinux/config"
       
+      ,"echo installing mysql oracle connector"
+      ,"sudo mkdir -p /usr/share/java"
+      ,"sudo cp mysql-connector-java-*-bin.jar /usr/share/java/mysql-connector-java.jar"
+      ,"sudo cp ojdbc6.jar /usr/share/java/oracle-connector-java.jar"
+      
       ,"echo enabling repo"
       ,"sudo mv ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
       ,"sudo mv ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
@@ -92,14 +109,17 @@
       ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
       ,"sudo yum-config-manager --disable rhui-REGION-client-config-server-7"
       
-      ,"echo installing createrepo"
-      ,"sudo yum install -y createrepo"
-      
       ,"echo installing yum-plugin-downloadonly"
       ,"sudo yum install -y yum-plugin-downloadonly"
-      
-      ,"echo downloading..."
       ,"sudo mkdir -p /opt/repo"
+
+      ,"echo downloading mysql"
+      ,"wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"
+      ,"sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm"
+      ,"rm mysql-community-release-el7-5.noarch.rpm"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo mysql-server mysql-community-server mysql"
+
+      ,"echo downloading packages..."
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo squid"
@@ -128,8 +148,9 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo dnsmasq"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo impala impala-server impala-state-store impala-catalog impala-shell"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
-
-      ,"echo installing cloudera manager"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo postgresql postgresql-libs postgresql-server"
+      
+      ,"echo downloading cloudera manager"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-server-db-2 cloudera-manager-agent"
 
@@ -139,6 +160,7 @@
       ,"find cloudera-cdh5/ cloudera-kudu/ -name '*.rpm' | sudo xargs mv -t /opt/repo/"
       
       ,"echo create repo"
+      ,"sudo yum install -y createrepo"
       ,"sudo createrepo /opt/repo"
       ,"sudo mv localrepo.repo /etc/yum.repos.d/"
 
