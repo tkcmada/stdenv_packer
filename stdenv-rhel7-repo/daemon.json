@@ -2,6 +2,7 @@
  "insecure-registries" : [
 "ems-docker-registry:8000",
 "emsdockerregistry:8000",
+"stdenvregistry.ddns.net:8000",
 "192.168.10.1:8000",
 "192.168.10.2:8000",
 "192.168.10.3:8000",
