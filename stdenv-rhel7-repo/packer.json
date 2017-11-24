@@ -80,12 +80,6 @@
    ,
    {
     "type": "file",
-    "source": "no-ip2.conf",
-    "destination": "~/"
-   }
-   ,
-   {
-    "type": "file",
     "source": "repo-switch-internet.sh",
     "destination": "~/"
    }
@@ -116,7 +110,7 @@
       ,"echo disabling selinux"
       ,"sudo setenforce 0"
       ,"echo SELINUX=disabled | sudo tee /etc/selinux/config"
-      
+            
       ,"echo installing mysql oracle connector"
       ,"sudo mkdir -p /usr/share/java"
       ,"sudo cp mysql-connector-java-*-bin.jar /usr/share/java/mysql-connector-java.jar"
@@ -132,7 +126,14 @@
       ,"sudo mv -t /etc/yum.repos.d/ ~/cloudera-cdh5.repo ~/cloudera-kudu.repo ~/cloudera-manager.repo ~/nginx.repo"
       ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
       ,"sudo yum-config-manager --disable rhui-REGION-client-config-server-7"
-      
+
+      ,"sudo yum install -y createrepo"
+
+      ,"echo installing docker"
+      ,"sudo yum install -y docker"
+      ,"sudo mv ~/daemon.json /etc/docker/daemon.json"
+      ,"sudo systemctl enable docker"
+
       ,"echo installing yum-plugin-downloadonly"
       ,"sudo yum install -y yum-plugin-downloadonly"
       ,"sudo mkdir -p /opt/repo"
@@ -175,10 +176,6 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo impala impala-server impala-state-store impala-catalog impala-shell"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo postgresql postgresql-libs postgresql-server"
-      
-      ,"echo downloading cloudera manager"
-      ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7"
-      ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-server-db-2 cloudera-manager-agent"
 
       ,"echo downloading repo"
       ,"sudo yum install -y createrepo"
@@ -189,17 +186,6 @@
       ,"echo create repo"
       ,"sudo createrepo /opt/repo"
       ,"sudo mv localrepo.repo /etc/yum.repos.d/"
-
-      ,"echo installing docker"
-      ,"sudo yum install -y docker"
-      ,"sudo mv ~/daemon.json /etc/docker/daemon.json"
-      ,"sudo systemctl enable docker"
-
-      ,"echo installing noip"
-      ,"sudo yum install -y noip"
-      ,"sudo install -m 600 no-ip2.conf /etc/"
-      ,"rm -f no-ip2.conf"
-      ,"sudo systemctl enable noip"
       
       ,"cd ~ && chmod +x repo-switch-internet.sh repo-switch-local.sh"
       ,"./repo-switch-local.sh"
