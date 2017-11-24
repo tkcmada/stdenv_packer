@@ -25,9 +25,17 @@
     "run_tags":      {"Name": "Packer stdenv-rhel7-repo"},
     "snapshot_tags": {"Name": "Packer stdenv-rhel7-repo"},
     "ami_name": "stdenv-rhel7-repo-{{isotime | clean_ami_name}}",
-    "ami_groups": "all"
+    "ami_users": [
+     "028299853772"
+    ]
   }],
  "provisioners": [
+   {
+    "type": "file",
+    "source": "download_and_createrepo.sh",
+    "destination": "~/"
+   }
+   ,
    {
     "type": "file",
     "source": "cloudera-cdh5.repo",
@@ -37,6 +45,18 @@
    {
     "type": "file",
     "source": "cloudera-kudu.repo",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "cloudera-manager.repo",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "nginx.repo",
     "destination": "~/"
    }
    ,
@@ -101,11 +121,15 @@
       ,"sudo mkdir -p /usr/share/java"
       ,"sudo cp mysql-connector-java-*-bin.jar /usr/share/java/mysql-connector-java.jar"
       ,"sudo cp ojdbc6.jar /usr/share/java/oracle-connector-java.jar"
+
+      ,"echo installing pip"
+      ,"wget https://bootstrap.pypa.io/get-pip.py"
+      ,"sudo python get-pip.py"
+      ,"sudo pip install awscli"
       
       ,"echo enabling repo"
       ,"sudo mv ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
-      ,"sudo mv ~/cloudera-cdh5.repo /etc/yum.repos.d/cloudera-cdh5.repo"
-      ,"sudo mv ~/cloudera-kudu.repo /etc/yum.repos.d/cloudera-kudu.repo"
+      ,"sudo mv -t /etc/yum.repos.d/ ~/cloudera-cdh5.repo ~/cloudera-kudu.repo ~/cloudera-manager.repo ~/nginx.repo"
       ,"sudo sed -i -e 's/^enabled=0/enabled=1/g' /etc/yum.repos.d/redhat-rhui.repo"
       ,"sudo yum-config-manager --disable rhui-REGION-client-config-server-7"
       
@@ -121,6 +145,8 @@
 
       ,"echo downloading packages..."
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo nginx"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo net-tools"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo squid"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo docker"
@@ -155,12 +181,12 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo cloudera-manager-daemons cloudera-manager-server cloudera-manager-server-db-2 cloudera-manager-agent"
 
       ,"echo downloading repo"
-      ,"cd ~ && reposync -r cloudera-cdh5"
-      ,"cd ~ && reposync -r cloudera-kudu"
-      ,"find cloudera-cdh5/ cloudera-kudu/ -name '*.rpm' | sudo xargs mv -t /opt/repo/"
-      
-      ,"echo create repo"
       ,"sudo yum install -y createrepo"
+      ,"sh download_and_createrepo.sh cloudera-cdh5    /var/html/www/cdh5/redhat/7/x86_64/cdh/5"
+      ,"sh download_and_createrepo.sh cloudera-manager /var/html/www/cm5/redhat/7/x86_64/cm/5.13.0"
+      ,"sh download_and_createrepo.sh cloudera-kudu    /var/html/www/kudu/redhat/7/x86_64/kudu/5"
+     
+      ,"echo create repo"
       ,"sudo createrepo /opt/repo"
       ,"sudo mv localrepo.repo /etc/yum.repos.d/"
 
