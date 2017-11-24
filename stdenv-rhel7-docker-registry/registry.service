@@ -1,0 +1,13 @@
+[Unit]
+Description = docker registry
+Requires = docker.service
+After = docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/root/start-registry.sh
+ExecStop=/root/stop-registry.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -11,7 +11,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-396dda5f",
+    "source_ami": "ami-bb46fadd",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
@@ -27,7 +27,9 @@
     "run_tags":      {"Name": "Packer stdenv-rhel7-docker-registry"},
     "snapshot_tags": {"Name": "Packer stdenv-rhel7-docker-registry"},
     "ami_name": "stdenv-rhel7-docker-registry-{{isotime | clean_ami_name}}",
-    "ami_groups": "all"
+    "ami_users": [
+     "028299853772"
+    ]
   }],
  "provisioners": [
    {
@@ -43,18 +45,48 @@
    }
    ,
    {
+    "type": "file",
+    "source": "registry.service",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "start-registry.sh",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "stop-registry.sh",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
-       "echo installing registry"
+       "lsblk"
+      
+      ,"echo make sure docker is running"
+      ,"sudo systemctl enable docker"
+      ,"sudo systemctl start  docker"
+      ,"bash -c 'sleep 10'"
+      ,"sudo docker info"
+      
+      ,"echo installing registry"
       ,"sudo docker pull registry"
       ,"sudo docker run -d -v /opt/registry:/var/lib/registry -p 8000:5000 registry"
-      ,"sudo chmod 755 run_docker_registry.sh"
-      ,"echo '@reboot ~/run_docker_registry.sh 2>&1 > ~/my_docker_registry.log' | crontab"
+      ,"sudo install -m 644 registry.service /etc/systemd/system/"
+      ,"rm registry.service"
+      ,"sudo install -m 755 start-registry.sh stop-registry.sh /root/"
+      ,"rm start-registry.sh stop-registry.sh"
+      ,"sudo systemctl enable registry"
 
       ,"echo installing noip"
       ,"sudo install -m 600 no-ip2.conf /etc/"
       ,"rm -f no-ip2.conf"
       ,"sudo systemctl enable noip"
+      ,"sudo systemctl start  noip"
      ]
    }
   ]
