@@ -11,7 +11,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-bb46fadd",
+    "source_ami": "ami-a03884c6",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.micro",
     "ssh_username": "ec2-user",
@@ -24,20 +24,17 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "Packer stdenv-rhel7-docker-registry"},
-    "snapshot_tags": {"Name": "Packer stdenv-rhel7-docker-registry"},
-    "ami_name": "stdenv-rhel7-docker-registry-{{isotime | clean_ami_name}}",
+    "run_tags":      {"Name": "Packer stdenvregistry-{{isotime | clean_ami_name}}"},
+    "snapshot_tags": {"Name": "Packer stdenvregistry-{{isotime | clean_ami_name}}"},
+    "tags":          {"Basename": "stdenvregistry"
+                     ,"Version": "{{isotime | clean_ami_name}}"
+                     },
+    "ami_name": "stdenvregistry-{{isotime | clean_ami_name}}",
     "ami_users": [
      "028299853772"
     ]
   }],
  "provisioners": [
-   {
-    "type": "file",
-    "source": "run_docker_registry.sh",
-    "destination": "~/"
-   }
-   ,
    {
     "type": "file",
     "source": "no-ip2.conf",
@@ -66,6 +63,9 @@
     "type": "shell",
     "inline": [
        "lsblk"
+
+      ,"echo installing rpm"
+      ,"sudo yum install -y git bind-utils"
       
       ,"echo make sure docker is running"
       ,"sudo systemctl enable docker"
@@ -83,10 +83,11 @@
       ,"sudo systemctl enable registry"
 
       ,"echo installing noip"
+      ,"sudo yum install -y noip"
       ,"sudo install -m 600 no-ip2.conf /etc/"
       ,"rm -f no-ip2.conf"
-      ,"sudo systemctl enable noip"
-      ,"sudo systemctl start  noip"
+      ,"echo skipping   sudo systemctl enable noip"
+      ,"echo skipping   sudo systemctl start  noip"
      ]
    }
   ]
