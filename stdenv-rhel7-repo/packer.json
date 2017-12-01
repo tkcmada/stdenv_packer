@@ -146,6 +146,7 @@
 
       ,"echo downloading packages..."
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo chrony"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo nginx"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo net-tools"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
