@@ -22,9 +22,9 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "Packer stdenv-rhel7-repo"},
-    "snapshot_tags": {"Name": "Packer stdenv-rhel7-repo"},
-    "ami_name": "stdenv-rhel7-repo-{{isotime | clean_ami_name}}",
+    "run_tags":      {"Name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}"},
+    "ami_name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}",
     "ami_users": [
      "028299853772"
     ]
@@ -128,6 +128,7 @@
       ,"sudo yum-config-manager --disable rhui-REGION-client-config-server-7"
 
       ,"sudo yum install -y createrepo"
+      ,"sudo yum update -y openssl"
 
       ,"echo installing docker"
       ,"sudo yum install -y docker"
@@ -147,6 +148,7 @@
       ,"echo downloading packages..."
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo chrony"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo nodejs npm"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo nginx"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo net-tools"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo git"
@@ -187,9 +189,10 @@
       ,"echo create repo"
       ,"sudo createrepo /opt/repo"
       ,"sudo mv localrepo.repo /etc/yum.repos.d/"
-      
+
       ,"cd ~ && chmod +x repo-switch-internet.sh repo-switch-local.sh"
       ,"./repo-switch-local.sh"
+
 
       ,"echo Completed Packer"
      ]
