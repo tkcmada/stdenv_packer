@@ -68,6 +68,12 @@
    ,
    {
     "type": "file",
+    "source": "docker-storage",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "file",
     "source": "kubernetes.repo",
     "destination": "~/"
    }
@@ -133,6 +139,7 @@
       ,"echo installing docker"
       ,"sudo yum install -y docker"
       ,"sudo mv ~/daemon.json /etc/docker/daemon.json"
+      ,"sudo install -m 644 ~/docker-storage /etc/sysconfig/docker-storage"
       ,"sudo systemctl enable docker"
 
       ,"echo installing yum-plugin-downloadonly"
