@@ -22,9 +22,9 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}"},
-    "snapshot_tags": {"Name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}"},
-    "ami_name": "stdenv_rhel7_repo-{{isotime \"20060102\"}}",
+    "run_tags":      {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
+    "ami_name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}",
     "ami_users": [
      "028299853772"
     ]
@@ -153,6 +153,7 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo mysql-server mysql-community-server mysql"
 
       ,"echo downloading packages..."
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo oracle-j2sdk1.7 cloudera-manager-daemons cloudera-manager-server cloudera-manager-agent  cloudera-manager-server-db-2"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo ansible"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo chrony"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo nodejs npm"
