@@ -3,3 +3,4 @@ stdenv-rhel7-repo/build.log
 stdenv-rhel7-repo/build.pwd
 stdenv-rhel7-repo/build.pwi
 stdenv-rhel7-repo/nohup.out
+stdenv-redhatrepo/nohup.out

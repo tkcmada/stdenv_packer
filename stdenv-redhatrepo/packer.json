@@ -45,6 +45,12 @@
    }
    ,
    {
+    "type": "file",
+    "source": "subscription-find-pool.py",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
        "lsblk"
@@ -52,8 +58,12 @@
       ,"echo disabling selinux"
       ,"sudo setenforce 0"
       ,"echo SELINUX=disabled | sudo tee /etc/selinux/config"
+
+      ,"echo setting RHEL envvar. {{user `rhel_user`}}/{{user `rhel_password`}}"
+      ,"export RHEL_USER=\"{{user `rhel_user`}}\""
+      ,"export RHEL_PASSWORD=\"{{user `rhel_password`}}\""
             
-      ,"sudo sh subscription-enable-repo.sh rhel-7-server-extras-rpms rhel-7-server-optional-rpms rhel-7-server-rpms"
+      ,"sudo sh subscription-enable-repo.sh \"{{user `rhel_user`}}\" \"{{user `rhel_password`}}\" rhel-7-server-extras-rpms rhel-7-server-optional-rpms rhel-7-server-rpms"
 
       ,"sudo yum install -y createrepo httpd"
       ,"sudo systemctl enable httpd"
