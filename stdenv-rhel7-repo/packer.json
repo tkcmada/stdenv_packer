@@ -187,12 +187,14 @@
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo impala impala-server impala-state-store impala-catalog impala-shell"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
       ,"sudo yum install --downloadonly --downloaddir=/opt/repo postgresql postgresql-libs postgresql-server"
+      ,"sudo yum install --downloadonly --downloaddir=/opt/repo nfs-utils"
 
       ,"echo downloading repo"
       ,"sudo yum install -y createrepo"
-      ,"sh download_and_createrepo.sh cloudera-cdh5    /var/html/www/cdh5/redhat/7/x86_64/cdh/5"
-      ,"sh download_and_createrepo.sh cloudera-manager /var/html/www/cm5/redhat/7/x86_64/cm/5.13.0"
-      ,"sh download_and_createrepo.sh cloudera-kudu    /var/html/www/kudu/redhat/7/x86_64/kudu/5"
+
+      ,"echo skip : sh download_and_createrepo.sh cloudera-cdh5    /var/html/www/cdh5/redhat/7/x86_64/cdh/5"
+      ,"echo skip : sh download_and_createrepo.sh cloudera-manager /var/html/www/cm5/redhat/7/x86_64/cm/5.13.0"
+      ,"echo skip : sh download_and_createrepo.sh cloudera-kudu    /var/html/www/kudu/redhat/7/x86_64/kudu/5"
      
       ,"echo create repo"
       ,"sudo createrepo /opt/repo"
