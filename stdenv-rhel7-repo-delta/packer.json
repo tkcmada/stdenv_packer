@@ -47,7 +47,7 @@
       ,"sudo yumdownloader --resolve --destdir=/opt/repo mysql-server mysql-community-server mysql"
 
       ,"echo create repo"
-      ,"sudo createrepo /opt/repo"
+      ,"sudo time createrepo /opt/repo"
 
       ,"./repo-switch-local.sh"
 
