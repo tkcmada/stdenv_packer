@@ -126,6 +126,8 @@
       ,"wget https://bootstrap.pypa.io/get-pip.py"
       ,"sudo python get-pip.py"
       ,"sudo pip install awscli"
+      ,"sudo yum install -y python-devel"
+      ,"sudo pip install jupyter"
       
       ,"echo enabling repo"
       ,"sudo mv ~/kubernetes.repo /etc/yum.repos.d/kubernetes.repo"
