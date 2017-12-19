@@ -41,10 +41,7 @@
     "inline": [
        "./repo-switch-internet.sh"
 
-      ,"echo installing pip"
-      ,"sudo pip install awscli"
-      
-      ,"sudo yumdownloader --resolve --destdir=/opt/repo mysql-server mysql-community-server mysql"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
 
       ,"echo create repo"
       ,"sudo time createrepo /opt/repo"
