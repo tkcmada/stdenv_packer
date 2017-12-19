@@ -1,0 +1,58 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ssh_pty": true,
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "ap-northeast-1",
+    "source_ami": "ami-82aa23e4",
+    "ami_virtualization_type": "hvm",
+    "instance_type": "t2.medium",
+    "ssh_username": "ec2-user",
+    "ssh_timeout": "5m",
+    "user_data_file" : "startup.sh",
+    "launch_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_size": 100,
+        "delete_on_termination": true
+      }
+    ],
+    "run_tags":      {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
+    "ami_name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}",
+    "ami_users": [
+     "028299853772"
+    ]
+  }],
+ "provisioners": [
+   {
+    "type": "file",
+    "source": "mysql-connector-java-5.1.44-bin.jar",
+    "destination": "~/"
+   }
+   ,
+   {
+    "type": "shell",
+    "inline": [
+       "./repo-switch-internet.sh"
+
+      ,"echo installing pip"
+      ,"sudo pip install awscli"
+      
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo mysql-server mysql-community-server mysql"
+
+      ,"echo create repo"
+      ,"sudo createrepo /opt/repo"
+
+      ,"./repo-switch-local.sh"
+
+      ,"echo Completed Packer"
+     ]
+   }
+  ]
+}
