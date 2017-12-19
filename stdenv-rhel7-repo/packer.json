@@ -126,7 +126,7 @@
       ,"wget https://bootstrap.pypa.io/get-pip.py"
       ,"sudo python get-pip.py"
       ,"sudo pip install awscli"
-      ,"sudo yum install -y python-devel"
+      ,"sudo yum install -y python-devel gcc gcc-c++"
       ,"sudo pip install jupyter"
       
       ,"echo enabling repo"
