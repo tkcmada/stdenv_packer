@@ -11,7 +11,7 @@
     "region": "ap-northeast-1",
     "source_ami": "ami-82aa23e4",
     "ami_virtualization_type": "hvm",
-    "instance_type": "t2.medium",
+    "instance_type": "t2.large",
     "ssh_username": "ec2-user",
     "ssh_timeout": "5m",
     "user_data_file" : "startup.sh",
@@ -42,6 +42,12 @@
        "./repo-switch-internet.sh"
 
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
+      ,"sudo pip install awslogs"
+
+      ,"sudo yum install -y bzip2"
+      ,"wget https://repo.continuum.io/archive/Anaconda2-5.0.1-Linux-x86_64.sh"
+      ,"sh Anaconda2-5.0.1-Linux-x86_64.sh -b"
+      ,"./anaconda2/bin/pip install chainer"
 
       ,"echo create repo"
       ,"sudo createrepo /opt/repo"
