@@ -48,9 +48,10 @@
       ,"wget https://repo.continuum.io/archive/Anaconda2-5.0.1-Linux-x86_64.sh"
       ,"sh Anaconda2-5.0.1-Linux-x86_64.sh -b"
       ,"./anaconda2/bin/pip install chainer"
+      ,"./anaconda2/bin/pip install jupyter"
 
       ,"echo create repo"
-      ,"echo skip for time saving : sudo createrepo /opt/repo"
+      ,"echo skip for time saving : sudo createrepo -c /opt/repo/cache --update /opt/repo"
 
       ,"./repo-switch-local.sh"
 
