@@ -50,7 +50,7 @@
       ,"./anaconda2/bin/pip install chainer"
 
       ,"echo create repo"
-      ,"sudo createrepo /opt/repo"
+      ,"echo skip for time saving : sudo createrepo /opt/repo"
 
       ,"./repo-switch-local.sh"
 
