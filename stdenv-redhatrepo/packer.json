@@ -68,6 +68,7 @@
       ,"sudo yum install -y createrepo httpd"
       ,"sudo systemctl enable httpd"
       ,"sudo mkdir -p /var/www/html"
+      ,"sudo sh download_and_createrepo.sh rhel-7-server-thirdparty-oracle-java-rpms /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-extras-rpms   /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-optional-rpms /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-rpms          /var/www/html"
