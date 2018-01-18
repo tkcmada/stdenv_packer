@@ -36,16 +36,17 @@
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
+      ,"ls -l"
+      ,"mkdir -p download"
+      ,"sudo chown ec2-user:ec2-user *"
+      ,"mv *.jar *.py download/"
+
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 git" 
 
       ,"echo installing yum packages"
       ,"sudo yum install -y bzip2 git"
-
-      ,"echo installing oracle jdk8"
-      ,"wget https://s3-ap-northeast-1.amazonaws.com/stdenvpublic/jdk-8u162-linux-x64.rpm"
-      ,"sudo yum localinstall jdk-*.rpm"
 
       ,"echo installing python package via pip into system python"
       ,"sudo pip install awslogs"
