@@ -43,6 +43,10 @@
       ,"echo installing yum packages"
       ,"sudo yum install -y bzip2 git"
 
+      ,"echo installing oracle jdk8"
+      ,"wget https://s3-ap-northeast-1.amazonaws.com/stdenvpublic/jdk-8u162-linux-x64.rpm"
+      ,"sudo yum localinstall jdk-*.rpm"
+
       ,"echo installing python package via pip into system python"
       ,"sudo pip install awslogs"
 
