@@ -63,7 +63,7 @@
       ,"export RHEL_USER=\"{{user `rhel_user`}}\""
       ,"export RHEL_PASSWORD=\"{{user `rhel_password`}}\""
             
-      ,"sudo sh subscription-enable-repo.sh \"{{user `rhel_user`}}\" \"{{user `rhel_password`}}\" rhel-7-server-extras-rpms rhel-7-server-optional-rpms rhel-7-server-rpms"
+      ,"sudo sh subscription-enable-repo.sh \"{{user `rhel_user`}}\" \"{{user `rhel_password`}}\" rhel-7-server-extras-rpms rhel-7-server-optional-rpms rhel-7-server-rpms rhel-7-server-thirdparty-oracle-java-rpms"
 
       ,"sudo yum install -y createrepo httpd"
       ,"sudo systemctl enable httpd"
