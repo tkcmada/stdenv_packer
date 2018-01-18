@@ -38,12 +38,13 @@
 
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 git" 
+
+      ,"echo installing yum packages"
+      ,"sudo yum install -y bzip2 git"
 
       ,"echo installing python package via pip into system python"
       ,"sudo pip install awslogs"
-
-      ,"echo installing yum packages"
-      ,"sudo yum install -y bzip2"
 
       ,"echo installing pyenv"
       ,"git clone https://github.com/yyuu/pyenv.git ~/.pyenv"
@@ -57,6 +58,7 @@
       ,"pyenv rehash"
       ,"pyenv versions"
       ,"pyenv global anaconda3-5.0.1"
+      ,"echo installing python packages via conda into anaconda python"
       ,"yes | conda install chainer"
 
       ,"echo swtich back to system python"
