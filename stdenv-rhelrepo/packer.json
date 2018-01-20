@@ -13,7 +13,7 @@
     "region": "ap-northeast-1",
     "source_ami": "ami-31228957",
     "ami_virtualization_type": "hvm",
-    "instance_type": "t2.micro",
+    "instance_type": "t2.small",
     "ssh_username": "ec2-user",
     "ssh_timeout": "5m",
     "user_data_file" : "startup.sh",
@@ -24,9 +24,9 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "stdenv_redhatrepo-{{isotime \"20060102_0304\"}}"},
-    "snapshot_tags": {"Name": "stdenv_redhatrepo-{{isotime \"20060102_0304\"}}"},
-    "ami_name": "stdenv_redhatrepo-{{isotime \"20060102_0304\"}}",
+    "run_tags":      {"Name": "stdenv_rhelrepo-{{isotime \"20060102_0304\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhelrepo-{{isotime \"20060102_0304\"}}"},
+    "ami_name": "stdenv_rhelrepo-{{isotime \"20060102_0304\"}}",
     "ami_users": [
      "028299853772"
     ]
@@ -68,7 +68,7 @@
       ,"sudo yum install -y createrepo httpd"
       ,"sudo systemctl enable httpd"
       ,"sudo mkdir -p /var/www/html"
-      ,"echo skip die to error : sudo sh download_and_createrepo.sh rhel-7-server-thirdparty-oracle-java-rpms /var/www/html"
+      ,"echo skip due to no rpms : sudo sh download_and_createrepo.sh rhel-7-server-thirdparty-oracle-java-rpms /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-extras-rpms   /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-optional-rpms /var/www/html"
       ,"sudo sh download_and_createrepo.sh rhel-7-server-rpms          /var/www/html"
