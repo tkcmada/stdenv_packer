@@ -22,9 +22,9 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}"},
-    "snapshot_tags": {"Name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}"},
-    "ami_name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}",
+    "run_tags":      {"Name": "stdenv_rhel7_base-{{isotime \"20060102_0304\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhel7_base-{{isotime \"20060102_0304\"}}"},
+    "ami_name": "stdenv_rhel7_base-{{isotime \"20060102_0304\"}}",
     "ami_users": [
      "028299853772"
     ]
