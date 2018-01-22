@@ -9,9 +9,9 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-82aa23e4",
+    "source_ami": "ami-7ca5c61a",
     "ami_virtualization_type": "hvm",
-    "instance_type": "t2.large",
+    "instance_type": "t2.medium",
     "ssh_username": "ec2-user",
     "ssh_timeout": "5m",
     "user_data_file" : "startup.sh",
@@ -22,9 +22,9 @@
         "delete_on_termination": true
       }
     ],
-    "run_tags":      {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
-    "snapshot_tags": {"Name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}"},
-    "ami_name": "stdenv_rhel7_repo-{{isotime \"20060102_0304\"}}",
+    "run_tags":      {"Name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}"},
+    "snapshot_tags": {"Name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}"},
+    "ami_name": "stdenv_rhel7-{{isotime \"20060102_0304\"}}",
     "ami_users": [
      "028299853772"
     ]
@@ -36,46 +36,22 @@
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
-      ,"ls -l"
-      ,"mkdir -p download"
-      ,"sudo chown ec2-user:ec2-user *"
-      ,"mv *.jar *.py download/"
-
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
-
-      ,"echo download and install yum packages"
-      ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 git" 
-      ,"sudo yum install -y bzip2 git"
 
       ,"echo createrepo is required as new yum packages are installed"
       ,"sudo createrepo --update /opt/repo"
 
-      ,"echo installing pyenv"
-      ,"git clone https://github.com/yyuu/pyenv.git ~/.pyenv"
-      ,"echo 'export PYENV_ROOT=\"$HOME/.pyenv\"' >> ~/.bashrc"
-      ,"echo 'export PATH=\"$PYENV_ROOT/bin:$PATH\"' >> ~/.bashrc"
-      ,"echo 'eval \"$(pyenv init -)\"' >> ~/.bashrc"
-      ,"source ~/.bashrc"
+      ,"echo switch back to local repository"
+      ,"./repo-switch-local.sh"
 
-      ,"echo installing anaconda via pyenv"
-      ,"pyenv install anaconda3-5.0.1"
-      ,"pyenv rehash"
-      ,"pyenv versions"
       ,"pyenv global anaconda3-5.0.1"
       ,"echo installing python packages via conda into anaconda python"
       ,"yes | conda install chainer"
 
-
-
-
-
       ,"echo swtich back to system python and install pip package to system python"
       ,"pyenv global system"
       ,"sudo pip install awslogs"
-
-      ,"echo switch back to local repository"
-      ,"./repo-switch-local.sh"
 
       ,"echo Completed Packer"
      ]
