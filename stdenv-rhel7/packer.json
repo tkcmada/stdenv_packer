@@ -190,6 +190,8 @@
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kudu kudu-master kudu-tserver kudu-client0 kudu-client-devel"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo postgresql postgresql-libs postgresql-server"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo nfs-utils"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x
+86_64"
 
       ,"ls -l"
       ,"mkdir -p download"
@@ -224,6 +226,30 @@
       ,"pyenv rehash"
       ,"pyenv versions"
       ,"pyenv global system"
+
+      ,"echo yum update including curl upgrade"
+      ,"sudo yum update -y"
+
+      ,"echo yum download and install for ruby build"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 gcc openssl-devel readline-devel zlib-devel"
+      ,"sudo yum install -y bzip2 gcc openssl-devel readline-devel zlib-devel"
+
+      ,"echo installing rbenv and ruby"
+      ,"git clone git://github.com/sstephenson/rbenv.git .rbenv"
+      ,"git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build"
+      ,"cat download/bashrc_rbenv.sh >> ~/.bashrc"
+      ,"source ~/.bashrc"
+      ,"CONFIGURE_OPTS=\"--disable-install-rdoc\" rbenv install 2.4.3"
+
+      ,"echo installing fluentd and plugins"
+      ,"sudo sh download/install-redhat-td-agent3.sh"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kinesis"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-suppress"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-s3"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ecs-metadata-filter"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ecs-filter"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep"
 
       ,"echo Completed Packer"
      ]
