@@ -32,6 +32,18 @@
  "provisioners": [
    {
     "type": "file",
+    "source": "packer.json",
+    "destination": "~/download/packer.delta.json"
+   }
+   ,
+   {
+    "type": "file",
+    "source": "../rhel/packer.json",
+    "destination": "~/download/packer.base.json"
+   }
+   ,
+   {
+    "type": "file",
     "source": "download/td.repo",
     "destination": "~/"
    }
@@ -42,9 +54,21 @@
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
+      ,"echo upgrade curl"
+      ,"sudo yum upgrade -y curl"
+
+      ,"echo installing td-agent(fluentd) and plugins"
+      ,"curl --tlsv1.2 -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh | sudo sh"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kinesis"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-suppress"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-s3"
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ecs-metadata-filter" 
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ecs-filter" 
+      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep" 
+
       ,"echo downloading yum packages..."
       ,"sudo mv td.repo /etc/yum.repos.d/"
-      ,"sudo yumdownloader --resolve --destdir=/opt/repo td-agent"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
 
       ,"echo createrepo is required as new yum packages are installed"
