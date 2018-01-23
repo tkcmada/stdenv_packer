@@ -31,12 +31,20 @@
   }],
  "provisioners": [
    {
+    "type": "file",
+    "source": "download/td.repo",
+    "destination": "~/"
+   }
+   ,
+   {
     "type": "shell",
     "inline": [
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
       ,"echo downloading yum packages..."
+      ,"sudo mv td.repo /etc/yum.repos.d/"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo td-agent"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo kubeadm-1.8.5.0-x86_64 kubelet-1.8.5-0.x86_64 kubectl-1.8.5-0.x86_64"
 
       ,"echo createrepo is required as new yum packages are installed"
