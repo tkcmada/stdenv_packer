@@ -38,18 +38,6 @@
    ,
    {
     "type": "file",
-    "source": "download/bashrc_rbenv.sh",
-    "destination": "~/download/"
-   }
-   ,
-   {
-    "type": "file",
-    "source": "download/install-redhat-td-agent3.sh",
-    "destination": "~/download/"
-   }
-   ,
-   {
-    "type": "file",
     "source": "../rhel/packer.json",
     "destination": "~/download/packer.base.json"
    }
@@ -60,12 +48,8 @@
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
-      ,"echo installing rbenv and ruby"
-      ,"git clone git://github.com/sstephenson/rbenv.git .rbenv"
-      ,"git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build"
-      ,"cat download/bashrc_rbenv.sh >> ~/.bashrc"
-      ,"source ~/.bashrc"
-      ,"CONFIGURE_OPTS=\"--disable-install-rdoc\" rbenv install 2.4.3"
+      ,"echo rbenv"
+      ,"rbenv versions"
 
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2"

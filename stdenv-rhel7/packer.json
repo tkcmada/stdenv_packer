@@ -51,6 +51,12 @@
    ,
    {
     "type": "file",
+    "source": "download/install-redhat-td-agent3.sh",
+    "destination": "~/download/"
+   }
+   ,
+   {
+    "type": "file",
     "source": "cloudera-cdh5.repo",
     "destination": "~/"
    }
