@@ -38,6 +38,12 @@
    ,
    {
     "type": "file",
+    "source": "download/install-redhat-td-agent3.sh",
+    "destination": "~/download/"
+   }
+   ,
+   {
+    "type": "file",
     "source": "../rhel/packer.json",
     "destination": "~/download/packer.base.json"
    }
@@ -58,7 +64,7 @@
       ,"sudo yum upgrade -y curl"
 
       ,"echo installing td-agent(fluentd) and plugins"
-      ,"curl --tlsv1.2 -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh | sudo sh"
+      ,"sudo sh download/install-redhat-td-agent3.sh"
       ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-cloudwatch-logs"
       ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-kinesis"
       ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-suppress"
