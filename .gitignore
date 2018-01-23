@@ -7,3 +7,4 @@ stdenv-redhatrepo/nohup.out
 stdenv-rhel7-repo-delta/nohup.out
 stdenv-rhelrepo/nohup.out
 stdenv-rhel7-delta/nohup.out
+stdenv-rhel7/nohup.out
