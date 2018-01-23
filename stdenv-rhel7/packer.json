@@ -222,13 +222,6 @@
       ,"echo skip : sh download_and_createrepo.sh cloudera-manager /var/html/www/cm5/redhat/7/x86_64/cm/5.13.0"
       ,"echo skip : sh download_and_createrepo.sh cloudera-kudu    /var/html/www/kudu/redhat/7/x86_64/kudu/5"
      
-      ,"echo create repo"
-      ,"sudo createrepo /opt/repo"
-      ,"sudo mv localrepo.repo /etc/yum.repos.d/"
-
-      ,"cd ~ && chmod +x repo-switch-internet.sh repo-switch-local.sh"
-      ,"./repo-switch-local.sh"
-
       ,"echo installing pyenv"
       ,"git clone https://github.com/yyuu/pyenv.git ~/.pyenv"
       ,"echo 'export PYENV_ROOT=\"$HOME/.pyenv\"' >> ~/.bashrc"
@@ -244,6 +237,7 @@
 
       ,"echo yum update including curl upgrade"
       ,"sudo yum update -y"
+      ,"sudo yum upgrade -y curl"
 
       ,"echo yum download and install for ruby build"
       ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 gcc openssl-devel readline-devel zlib-devel"
@@ -266,6 +260,11 @@
       ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ecs-filter"
       ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep"
 
+      ,"echo create repo"
+      ,"sudo createrepo /opt/repo"
+      ,"sudo mv localrepo.repo /etc/yum.repos.d/"
+      ,"cd ~ && chmod +x repo-switch-internet.sh repo-switch-local.sh"
+      ,"./repo-switch-local.sh"
       ,"echo Completed Packer"
      ]
    }

@@ -60,8 +60,12 @@
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
 
-      ,"echo installing fluentd plugins"
-      ,"sudo /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grep" 
+      ,"echo installing rbenv and ruby"
+      ,"git clone git://github.com/sstephenson/rbenv.git .rbenv"
+      ,"git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build"
+      ,"cat download/bashrc_rbenv.sh >> ~/.bashrc"
+      ,"source ~/.bashrc"
+      ,"CONFIGURE_OPTS=\"--disable-install-rdoc\" rbenv install 2.4.3"
 
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2"
@@ -75,6 +79,13 @@
       ,"pyenv global system"
       ,"sudo pip install awslogs"
 
+
+
+
+
+
+
+      ,"echo -------------------------------------------------"
       ,"echo closing process. DO NOT add your code below"
       ,"echo createrepo is required as new yum packages are installed"
       ,"sudo createrepo --update /opt/repo"
