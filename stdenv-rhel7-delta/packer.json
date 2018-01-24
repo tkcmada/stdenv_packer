@@ -9,7 +9,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "region": "ap-northeast-1",
-    "source_ami": "ami-7ca5c61a",
+    "source_ami": "ami-245b3942",
     "ami_virtualization_type": "hvm",
     "instance_type": "t2.medium",
     "ssh_username": "ec2-user",
@@ -47,9 +47,6 @@
     "inline": [
        "echo enable repositories for internet"
       ,"./repo-switch-internet.sh"
-
-      ,"echo rbenv"
-      ,"rbenv versions"
 
       ,"echo downloading yum packages..."
       ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2"
