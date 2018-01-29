@@ -53,6 +53,7 @@
 
       ,"pyenv global anaconda3-5.0.1"
       ,"echo installing python packages via conda into anaconda python"
+      ,"pyenv global anaconda3-5.0.1"
       ,"yes | conda install chainer"
 
       ,"echo swtich back to system python and install pip package to system python"
