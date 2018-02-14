@@ -49,7 +49,7 @@
       ,"./repo-switch-internet.sh"
 
       ,"echo downloading yum packages..."
-      ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2"
+      ,"sudo yumdownloader --resolve --destdir=/opt/repo bzip2 p7zip"
 
       ,"echo installing python packages via conda into anaconda python"
       ,"pyenv global anaconda3-5.0.1"
